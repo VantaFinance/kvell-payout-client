@@ -1,0 +1,49 @@
+{
+    "name": "vanta/kvell-payout-client",
+    "description": "Client for kvell payout",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Vanta\\Integration\\KvellPayout\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Vlad Shashkov",
+            "email": "v.shashkov@pos-credit.ru"
+        },
+        {
+            "name": "Vanta Team",
+            "homepage": "https://vanta.ru"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "ext-openssl": "*",
+        "psr/http-client": "^1.0",
+        "yiisoft/http": "^1.2",
+        "guzzlehttp/psr7": "^2.6",
+        "symfony/serializer": "^6.1",
+        "symfony/property-access": "^6.1",
+        "doctrine/annotations": "^2.0",
+        "brick/phonenumber": "^0.4|^0.5",
+        "moneyphp/money": "^4.2",
+        "phpdocumentor/reflection-docblock": "^5.3"
+    },
+    "suggest": {
+        "psr/http-client-implementation": "Psr http client implementation"
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^6.1",
+        "friendsofphp/php-cs-fixer": "^3.37",
+        "guzzlehttp/guzzle": "^7.7",
+        "symfony/http-client": "^6.1",
+        "phpstan/extension-installer": "^1.3",
+        "phpstan/phpstan-symfony": "^1.3"
+    },
+    "config": {
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
+    }
+}

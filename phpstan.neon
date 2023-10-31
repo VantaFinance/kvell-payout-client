@@ -1,0 +1,14 @@
+parameters:
+    level: 9
+    paths:
+        - src
+    stubFiles:
+        - stubs/Symfony/Serializer/DenormalizerInterface.stub
+        - stubs/Symfony/Serializer/NormalizerInterface.stub
+    exceptions:
+        implicitThrows: true
+        check:
+            tooWideThrowType: true
+
+    parallel:
+            maximumNumberOfProcesses: 4
