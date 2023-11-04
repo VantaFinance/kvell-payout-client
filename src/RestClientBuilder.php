@@ -249,7 +249,7 @@ final class RestClientBuilder
         );
     }
 
-    public function createOrderClient(): PayoutClient
+    public function createPayoutClient(): PayoutClient
     {
         return new RestClientPayout(
             $this->serializer,

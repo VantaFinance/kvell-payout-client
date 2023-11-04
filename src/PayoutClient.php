@@ -57,5 +57,5 @@ interface PayoutClient
      *
      * @throws ClientException
      */
-    public function getOrder(string $transactionId): Order;
+    public function getPayout(string $transactionId): Order;
 }

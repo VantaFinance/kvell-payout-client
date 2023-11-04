@@ -75,7 +75,7 @@ final readonly class RestClientPayout implements PayoutClient
         return $this->serializer->deserialize($content, Order::class, 'json');
     }
 
-    public function getOrder(string $transactionId): Order
+    public function getPayout(string $transactionId): Order
     {
         $request = new Request(Method::GET, sprintf('/v1/orders/%s', $transactionId), ['digest' => $transactionId]);
         $content = $this->httpClient->sendRequest($request)->getBody()->__toString();
