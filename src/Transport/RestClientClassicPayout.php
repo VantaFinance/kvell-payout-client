@@ -13,15 +13,15 @@ namespace Vanta\Integration\KvellPayout\Transport;
 use GuzzleHttp\Psr7\Request;
 use Psr\Http\Client\ClientExceptionInterface;
 use Symfony\Component\Serializer\SerializerInterface as Serializer;
+use Vanta\Integration\KvellPayout\ClassicPayoutClient;
 use Vanta\Integration\KvellPayout\Infrastructure\HttpClient\HttpClient;
 use Vanta\Integration\KvellPayout\Infrastructure\Serializer\PayoutDenormalizer;
-use Vanta\Integration\KvellPayout\PayoutClassicClient;
 use Vanta\Integration\KvellPayout\Request\ClassicPayout;
 use Vanta\Integration\KvellPayout\Response\Order;
 use Vanta\Integration\KvellPayout\Response\TransactionStatus;
 use Yiisoft\Http\Method;
 
-final readonly class RestClientPayoutClassic implements PayoutClassicClient
+final readonly class RestClientClassicPayout implements ClassicPayoutClient
 {
     public function __construct(
         private Serializer $serializer,

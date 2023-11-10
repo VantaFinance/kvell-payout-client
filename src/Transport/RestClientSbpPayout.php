@@ -14,14 +14,14 @@ use GuzzleHttp\Psr7\Request;
 use Symfony\Component\Serializer\Normalizer\UnwrappingDenormalizer;
 use Symfony\Component\Serializer\SerializerInterface as Serializer;
 use Vanta\Integration\KvellPayout\Infrastructure\HttpClient\HttpClient;
-use Vanta\Integration\KvellPayout\PayoutSbpClient;
 use Vanta\Integration\KvellPayout\Request\PossibleToPay;
 use Vanta\Integration\KvellPayout\Request\SbpPayout;
 use Vanta\Integration\KvellPayout\Response\Order;
 use Vanta\Integration\KvellPayout\Response\PossibleToPayStatus;
+use Vanta\Integration\KvellPayout\SbpPayoutClient;
 use Yiisoft\Http\Method;
 
-final readonly class RestClientPayoutSbp implements PayoutSbpClient
+final readonly class RestClientSbpPayout implements SbpPayoutClient
 {
     public function __construct(
         private Serializer $serializer,

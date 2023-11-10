@@ -47,10 +47,10 @@ use Vanta\Integration\KvellPayout\Infrastructure\Serializer\PayoutDenormalizer;
 use Vanta\Integration\KvellPayout\Infrastructure\Serializer\PhoneNumberNormalizer;
 use Vanta\Integration\KvellPayout\Struct\SignKey;
 use Vanta\Integration\KvellPayout\Transport\RestClientBank;
-use Vanta\Integration\KvellPayout\Transport\RestClientPayoutClassic;
-use Vanta\Integration\KvellPayout\Transport\RestClientPayoutSbp;
+use Vanta\Integration\KvellPayout\Transport\RestClientClassicPayout;
+use Vanta\Integration\KvellPayout\Transport\RestClientSbpPayout;
 
-final class RestClientBuilder
+final readonly class RestClientBuilder
 {
     private const PROD_URL = 'https://api.pay.kvell.group';
 
@@ -250,9 +250,9 @@ final class RestClientBuilder
         );
     }
 
-    public function createPayoutClassicClient(): PayoutClassicClient
+    public function createClassicPayoutClient(): ClassicPayoutClient
     {
-        return new RestClientPayoutClassic(
+        return new RestClientClassicPayout(
             $this->serializer,
             new HttpClient(
                 new ConfigurationClient($this->signKey, $this->apiKey, $this->secretKey, $this->url),
@@ -261,9 +261,9 @@ final class RestClientBuilder
         );
     }
 
-    public function createPayoutSbpClient(): PayoutSbpClient
+    public function createSbpPayoutClient(): SbpPayoutClient
     {
-        return new RestClientPayoutSbp(
+        return new RestClientSbpPayout(
             $this->serializer,
             new HttpClient(
                 new ConfigurationClient($this->signKey, $this->apiKey, $this->secretKey, $this->url),

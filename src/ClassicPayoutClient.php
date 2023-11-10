@@ -15,7 +15,7 @@ use Vanta\Integration\KvellPayout\Request\ClassicPayout;
 use Vanta\Integration\KvellPayout\Response\Order;
 use Vanta\Integration\KvellPayout\Response\TransactionStatus;
 
-interface PayoutClassicClient
+interface ClassicPayoutClient
 {
     /**
      * @throws ClientException

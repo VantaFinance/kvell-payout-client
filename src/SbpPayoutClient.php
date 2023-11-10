@@ -16,7 +16,7 @@ use Vanta\Integration\KvellPayout\Request\SbpPayout;
 use Vanta\Integration\KvellPayout\Response\Order;
 use Vanta\Integration\KvellPayout\Response\PossibleToPayStatus;
 
-interface PayoutSbpClient
+interface SbpPayoutClient
 {
     /**
      * @throws ClientException
