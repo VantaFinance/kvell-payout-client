@@ -38,7 +38,7 @@ interface PayoutSbpClient
     public function startCheckingPossibleToPay(PossibleToPay $request): string;
 
     /**
-     * @param non-empty-string $requestId*
+     * @param non-empty-string $requestId
      *
      * @throws ClientException
      */
