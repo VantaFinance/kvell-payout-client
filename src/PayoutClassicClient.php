@@ -11,22 +11,21 @@ declare(strict_types=1);
 namespace Vanta\Integration\KvellPayout;
 
 use Psr\Http\Client\ClientExceptionInterface as ClientException;
-use Vanta\Integration\KvellPayout\Request\PayoutCard;
+use Vanta\Integration\KvellPayout\Request\ClassicPayout;
 use Vanta\Integration\KvellPayout\Response\Order;
-use Vanta\Integration\KvellPayout\Response\PayoutClassic;
-use Vanta\Integration\KvellPayout\Response\PayoutOtp;
+use Vanta\Integration\KvellPayout\Response\TransactionStatus;
 
 interface PayoutClassicClient
 {
     /**
      * @throws ClientException
      */
-    public function createPayoutOtp(PayoutCard $request): PayoutOtp;
+    public function createPayoutOtp(ClassicPayout $request): TransactionStatus;
 
     /**
      * @throws ClientException
      */
-    public function createPayoutClassic(PayoutCard $request): PayoutClassic;
+    public function createPayoutClassic(ClassicPayout $request): Order;
 
     /**
      * @param non-empty-string $otp

@@ -11,8 +11,8 @@ declare(strict_types=1);
 namespace Vanta\Integration\KvellPayout;
 
 use Psr\Http\Client\ClientExceptionInterface as ClientException;
-use Vanta\Integration\KvellPayout\Request\PayoutSbp;
 use Vanta\Integration\KvellPayout\Request\PossibleToPay;
+use Vanta\Integration\KvellPayout\Request\SbpPayout;
 use Vanta\Integration\KvellPayout\Response\Order;
 use Vanta\Integration\KvellPayout\Response\PossibleToPayStatus;
 
@@ -21,7 +21,7 @@ interface PayoutSbpClient
     /**
      * @throws ClientException
      */
-    public function createPayoutClassic(PayoutSbp $request): Order;
+    public function createPayoutClassic(SbpPayout $request): Order;
 
     /**
      * @param non-empty-string $transactionId

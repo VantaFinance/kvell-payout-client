@@ -14,11 +14,11 @@ use GuzzleHttp\Psr7\Request;
 use Psr\Http\Client\ClientExceptionInterface;
 use Symfony\Component\Serializer\SerializerInterface as Serializer;
 use Vanta\Integration\KvellPayout\Infrastructure\HttpClient\HttpClient;
+use Vanta\Integration\KvellPayout\Infrastructure\Serializer\PayoutDenormalizer;
 use Vanta\Integration\KvellPayout\PayoutClassicClient;
-use Vanta\Integration\KvellPayout\Request\PayoutCard;
+use Vanta\Integration\KvellPayout\Request\ClassicPayout;
 use Vanta\Integration\KvellPayout\Response\Order;
-use Vanta\Integration\KvellPayout\Response\PayoutClassic;
-use Vanta\Integration\KvellPayout\Response\PayoutOtp;
+use Vanta\Integration\KvellPayout\Response\TransactionStatus;
 use Yiisoft\Http\Method;
 
 final readonly class RestClientPayoutClassic implements PayoutClassicClient
@@ -29,14 +29,14 @@ final readonly class RestClientPayoutClassic implements PayoutClassicClient
     ) {
     }
 
-    public function createPayoutOtp(PayoutCard $request): PayoutOtp
+    public function createPayoutOtp(ClassicPayout $request): TransactionStatus
     {
-        return $this->createPayout($request, PayoutOtp::class);
+        return $this->createPayout($request, TransactionStatus::class);
     }
 
-    public function createPayoutClassic(PayoutCard $request): PayoutClassic
+    public function createPayoutClassic(ClassicPayout $request): Order
     {
-        return $this->createPayout($request, PayoutClassic::class);
+        return $this->createPayout($request, Order::class);
     }
 
     public function approvePayout(string $transactionId, string $otp): Order
@@ -65,14 +65,16 @@ final readonly class RestClientPayoutClassic implements PayoutClassicClient
      *
      * @throws ClientExceptionInterface
      */
-    private function createPayout(PayoutCard $request, string $type)
+    private function createPayout(ClassicPayout $request, string $type)
     {
         $content  = $this->serializer->serialize($request, 'json');
         $request  = new Request(Method::POST, '/v1/orders/account2card', ['ssl-sign' => 'ssl'], $content);
         $response = $this->httpClient->sendRequest($request);
 
         /** @var T|null $result */
-        $result = $this->serializer->deserialize($response->getBody()->__toString(), $type, 'json');
+        $result = $this->serializer->deserialize($response->getBody()->__toString(), $type, 'json', [
+            PayoutDenormalizer::TRANSFORM => true,
+        ]);
 
         if (null == $result) {
             throw new \RuntimeException(sprintf('Not supported operation: %s', $type));

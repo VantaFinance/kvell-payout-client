@@ -15,8 +15,8 @@ use Symfony\Component\Serializer\Normalizer\UnwrappingDenormalizer;
 use Symfony\Component\Serializer\SerializerInterface as Serializer;
 use Vanta\Integration\KvellPayout\Infrastructure\HttpClient\HttpClient;
 use Vanta\Integration\KvellPayout\PayoutSbpClient;
-use Vanta\Integration\KvellPayout\Request\PayoutSbp;
 use Vanta\Integration\KvellPayout\Request\PossibleToPay;
+use Vanta\Integration\KvellPayout\Request\SbpPayout;
 use Vanta\Integration\KvellPayout\Response\Order;
 use Vanta\Integration\KvellPayout\Response\PossibleToPayStatus;
 use Yiisoft\Http\Method;
@@ -53,7 +53,7 @@ final readonly class RestClientPayoutSbp implements PayoutSbpClient
         ]);
     }
 
-    public function createPayoutClassic(PayoutSbp $request): Order
+    public function createPayoutClassic(SbpPayout $request): Order
     {
         $content  = $this->serializer->serialize($request, 'json');
         $request  = new Request(Method::POST, '/v1/orders/payout/sbp', ['ssl-sign' => 'ssl'], $content);
