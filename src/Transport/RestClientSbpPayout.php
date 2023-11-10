@@ -16,6 +16,7 @@ use Symfony\Component\Serializer\SerializerInterface as Serializer;
 use Vanta\Integration\KvellPayout\Infrastructure\HttpClient\HttpClient;
 use Vanta\Integration\KvellPayout\Request\PossibleToPay;
 use Vanta\Integration\KvellPayout\Request\SbpPayout;
+use Vanta\Integration\KvellPayout\Response\Bank;
 use Vanta\Integration\KvellPayout\Response\Order;
 use Vanta\Integration\KvellPayout\Response\PossibleToPayStatus;
 use Vanta\Integration\KvellPayout\SbpPayoutClient;
@@ -68,5 +69,13 @@ final readonly class RestClientSbpPayout implements SbpPayoutClient
         $content = $this->httpClient->sendRequest($request)->getBody()->__toString();
 
         return $this->serializer->deserialize($content, Order::class, 'json');
+    }
+
+    public function getBanks(): array
+    {
+        $request = new Request(Method::GET, '/v1/collections/banks');
+        $content = $this->httpClient->sendRequest($request)->getBody()->__toString();
+
+        return $this->serializer->deserialize($content, Bank::class . '[]', 'json');
     }
 }

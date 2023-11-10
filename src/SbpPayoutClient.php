@@ -13,6 +13,7 @@ namespace Vanta\Integration\KvellPayout;
 use Psr\Http\Client\ClientExceptionInterface as ClientException;
 use Vanta\Integration\KvellPayout\Request\PossibleToPay;
 use Vanta\Integration\KvellPayout\Request\SbpPayout;
+use Vanta\Integration\KvellPayout\Response\Bank;
 use Vanta\Integration\KvellPayout\Response\Order;
 use Vanta\Integration\KvellPayout\Response\PossibleToPayStatus;
 
@@ -43,4 +44,11 @@ interface SbpPayoutClient
      * @throws ClientException
      */
     public function getStatusPossibleToPay(string $requestId): PossibleToPayStatus;
+
+    /**
+     * @return list<Bank>
+     *
+     * @throws ClientException
+     */
+    public function getBanks(): array;
 }
