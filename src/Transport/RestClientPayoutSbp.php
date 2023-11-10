@@ -11,20 +11,17 @@ declare(strict_types=1);
 namespace Vanta\Integration\KvellPayout\Transport;
 
 use GuzzleHttp\Psr7\Request;
-use Psr\Http\Client\ClientExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\UnwrappingDenormalizer;
 use Symfony\Component\Serializer\SerializerInterface as Serializer;
 use Vanta\Integration\KvellPayout\Infrastructure\HttpClient\HttpClient;
-use Vanta\Integration\KvellPayout\PayoutClient;
-use Vanta\Integration\KvellPayout\Request\Payout;
+use Vanta\Integration\KvellPayout\PayoutSbpClient;
+use Vanta\Integration\KvellPayout\Request\PayoutSbp;
 use Vanta\Integration\KvellPayout\Request\PossibleToPay;
 use Vanta\Integration\KvellPayout\Response\Order;
-use Vanta\Integration\KvellPayout\Response\PayoutClassic;
-use Vanta\Integration\KvellPayout\Response\PayoutOtp;
 use Vanta\Integration\KvellPayout\Response\PossibleToPayStatus;
 use Yiisoft\Http\Method;
 
-final readonly class RestClientPayout implements PayoutClient
+final readonly class RestClientPayoutSbp implements PayoutSbpClient
 {
     public function __construct(
         private Serializer $serializer,
@@ -56,23 +53,13 @@ final readonly class RestClientPayout implements PayoutClient
         ]);
     }
 
-    public function createPayoutOtp(Payout $request): PayoutOtp
+    public function createPayoutClassic(PayoutSbp $request): Order
     {
-        return $this->createPayout($request, PayoutOtp::class);
-    }
+        $content  = $this->serializer->serialize($request, 'json');
+        $request  = new Request(Method::POST, '/v1/orders/payout/sbp', ['ssl-sign' => 'ssl'], $content);
+        $response = $this->httpClient->sendRequest($request);
 
-    public function createPayoutClassic(Payout $request): PayoutClassic
-    {
-        return $this->createPayout($request, PayoutClassic::class);
-    }
-
-    public function approvePayout(string $transactionId, string $otp): Order
-    {
-        $requestContent = $this->serializer->serialize(['transaction' => $transactionId, 'otp' => $otp], 'json');
-        $request        = new Request(Method::POST, '/v1/orders/account2card/confirm', [], $requestContent);
-        $content        = $this->httpClient->sendRequest($request)->getBody()->__toString();
-
-        return $this->serializer->deserialize($content, Order::class, 'json');
+        return $this->serializer->deserialize($response->getBody()->__toString(), Order::class, 'json');
     }
 
     public function getPayout(string $transactionId): Order
@@ -81,30 +68,5 @@ final readonly class RestClientPayout implements PayoutClient
         $content = $this->httpClient->sendRequest($request)->getBody()->__toString();
 
         return $this->serializer->deserialize($content, Order::class, 'json');
-    }
-
-    /**
-     * @template T
-     *
-     * @param class-string<T> $type
-     *
-     * @return T
-     *
-     * @throws ClientExceptionInterface
-     */
-    private function createPayout(Payout $request, string $type)
-    {
-        $content  = $this->serializer->serialize($request, 'json');
-        $request  = new Request(Method::POST, '/v1/orders/account2card', ['ssl-sign' => 'ssl'], $content);
-        $response = $this->httpClient->sendRequest($request);
-
-        /** @var T|null $result */
-        $result = $this->serializer->deserialize($response->getBody()->__toString(), $type, 'json');
-
-        if (null == $result) {
-            throw new \RuntimeException(sprintf('Not supported operation: %s', $type));
-        }
-
-        return $result;
     }
 }

@@ -47,7 +47,8 @@ use Vanta\Integration\KvellPayout\Infrastructure\Serializer\PayoutDenormalizer;
 use Vanta\Integration\KvellPayout\Infrastructure\Serializer\PhoneNumberNormalizer;
 use Vanta\Integration\KvellPayout\Struct\SignKey;
 use Vanta\Integration\KvellPayout\Transport\RestClientBank;
-use Vanta\Integration\KvellPayout\Transport\RestClientPayout;
+use Vanta\Integration\KvellPayout\Transport\RestClientPayoutClassic;
+use Vanta\Integration\KvellPayout\Transport\RestClientPayoutSbp;
 
 final class RestClientBuilder
 {
@@ -249,9 +250,20 @@ final class RestClientBuilder
         );
     }
 
-    public function createPayoutClient(): PayoutClient
+    public function createPayoutClassicClient(): PayoutClassicClient
     {
-        return new RestClientPayout(
+        return new RestClientPayoutClassic(
+            $this->serializer,
+            new HttpClient(
+                new ConfigurationClient($this->signKey, $this->apiKey, $this->secretKey, $this->url),
+                new PipelineMiddleware($this->middlewares, $this->client)
+            )
+        );
+    }
+
+    public function createPayoutSbpClient(): PayoutSbpClient
+    {
+        return new RestClientPayoutSbp(
             $this->serializer,
             new HttpClient(
                 new ConfigurationClient($this->signKey, $this->apiKey, $this->secretKey, $this->url),
