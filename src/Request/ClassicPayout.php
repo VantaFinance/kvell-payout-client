@@ -13,7 +13,7 @@ namespace Vanta\Integration\KvellPayout\Request;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Vanta\Integration\KvellPayout\Struct\MoneyPositive;
 
-final readonly class Payout
+final readonly class ClassicPayout
 {
     /**
      * @param non-empty-string          $description

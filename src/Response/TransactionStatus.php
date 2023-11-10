@@ -12,8 +12,9 @@ namespace Vanta\Integration\KvellPayout\Response;
 
 enum TransactionStatus: string
 {
-    case NEW        = 'new';
-    case PROCESSING = 'processing';
-    case CANCELED   = 'canceled';
-    case COMPLETED  = 'completed';
+    case NEW          = 'new';
+    case PROCESSING   = 'processing';
+    case CANCELED     = 'canceled';
+    case COMPLETED    = 'completed';
+    case WAIT_CONFIRM = 'wait_confirm';
 }

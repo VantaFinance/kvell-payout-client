@@ -12,19 +12,16 @@ namespace Vanta\Integration\KvellPayout\Transport;
 
 use GuzzleHttp\Psr7\Request;
 use Psr\Http\Client\ClientExceptionInterface;
-use Symfony\Component\Serializer\Normalizer\UnwrappingDenormalizer;
 use Symfony\Component\Serializer\SerializerInterface as Serializer;
+use Vanta\Integration\KvellPayout\ClassicPayoutClient;
 use Vanta\Integration\KvellPayout\Infrastructure\HttpClient\HttpClient;
-use Vanta\Integration\KvellPayout\PayoutClient;
-use Vanta\Integration\KvellPayout\Request\Payout;
-use Vanta\Integration\KvellPayout\Request\PossibleToPay;
+use Vanta\Integration\KvellPayout\Infrastructure\Serializer\PayoutDenormalizer;
+use Vanta\Integration\KvellPayout\Request\ClassicPayout;
 use Vanta\Integration\KvellPayout\Response\Order;
-use Vanta\Integration\KvellPayout\Response\PayoutClassic;
-use Vanta\Integration\KvellPayout\Response\PayoutOtp;
-use Vanta\Integration\KvellPayout\Response\PossibleToPayStatus;
+use Vanta\Integration\KvellPayout\Response\TransactionStatus;
 use Yiisoft\Http\Method;
 
-final readonly class RestClientPayout implements PayoutClient
+final readonly class RestClientClassicPayout implements ClassicPayoutClient
 {
     public function __construct(
         private Serializer $serializer,
@@ -32,38 +29,14 @@ final readonly class RestClientPayout implements PayoutClient
     ) {
     }
 
-    public function startCheckingPossibleToPay(PossibleToPay $request): string
+    public function createPayoutOtp(ClassicPayout $request): TransactionStatus
     {
-        $requestContent = $this->serializer->serialize($request, 'json');
-        $request        = new Request(Method::POST, '/v1/orders/payout/sbp/check', [
-            'digest' => str_replace('+', '', $request->phoneNumber->jsonSerialize()) . $request->bankId,
-        ], $requestContent);
-        $content = $this->httpClient->sendRequest($request)->getBody()->__toString();
-
-        /**@phpstan-ignore-next-line**/
-        return $this->serializer->deserialize($content, 'string', 'json', [
-            UnwrappingDenormalizer::UNWRAP_PATH => '[request_id]',
-        ]);
+        return $this->createPayout($request, TransactionStatus::class);
     }
 
-    public function getStatusPossibleToPay(string $requestId): PossibleToPayStatus
+    public function createPayoutClassic(ClassicPayout $request): Order
     {
-        $request = new Request(Method::GET, sprintf('/v1/orders/payout/sbp/check/status/%s', $requestId), ['digest' => $requestId]);
-        $content = $this->httpClient->sendRequest($request)->getBody()->__toString();
-
-        return $this->serializer->deserialize($content, PossibleToPayStatus::class, 'json', [
-            UnwrappingDenormalizer::UNWRAP_PATH => '[status]',
-        ]);
-    }
-
-    public function createPayoutOtp(Payout $request): PayoutOtp
-    {
-        return $this->createPayout($request, PayoutOtp::class);
-    }
-
-    public function createPayoutClassic(Payout $request): PayoutClassic
-    {
-        return $this->createPayout($request, PayoutClassic::class);
+        return $this->createPayout($request, Order::class);
     }
 
     public function approvePayout(string $transactionId, string $otp): Order
@@ -92,14 +65,16 @@ final readonly class RestClientPayout implements PayoutClient
      *
      * @throws ClientExceptionInterface
      */
-    private function createPayout(Payout $request, string $type)
+    private function createPayout(ClassicPayout $request, string $type)
     {
         $content  = $this->serializer->serialize($request, 'json');
         $request  = new Request(Method::POST, '/v1/orders/account2card', ['ssl-sign' => 'ssl'], $content);
         $response = $this->httpClient->sendRequest($request);
 
         /** @var T|null $result */
-        $result = $this->serializer->deserialize($response->getBody()->__toString(), $type, 'json');
+        $result = $this->serializer->deserialize($response->getBody()->__toString(), $type, 'json', [
+            PayoutDenormalizer::TRANSFORM => true,
+        ]);
 
         if (null == $result) {
             throw new \RuntimeException(sprintf('Not supported operation: %s', $type));
