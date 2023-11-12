@@ -38,7 +38,7 @@ $builder = RestClientBuilder::create(client: new Client(config: []), signKey: ne
     ->withEnvironmentStage()
 ;
 
-$result = $builder->createOrderClient()
+$result = $builder->createSbpPayoutClient()
      ->startCheckingPossibleToPay(
             new PossibleToPay(
                 'Шашков Владислав Максимович',
@@ -60,7 +60,7 @@ $builder = RestClientBuilder::create(client: new Client(config: []), signKey: ne
     ->withEnvironmentStage()
 ;
 
-$result = $builder->createOrderClient()->getStatusPossibleToPay('170444');
+$result = $builder->createSbpPayoutClient()->getStatusPossibleToPay('170444');
 ```
 
 
@@ -74,7 +74,7 @@ $builder = RestClientBuilder::create(client: new Client(config: []), signKey: ne
     ->withEnvironmentStage()
 ;
 
-$result = $builder->createOrderClient()->getOrder('b1e8fdb4-6562-4992-a933-cf029f9e31d3');
+$result = $builder->createClassicPayoutClient()->getOrder('b1e8fdb4-6562-4992-a933-cf029f9e31d3');
 ```
 
 
@@ -87,7 +87,7 @@ $builder = RestClientBuilder::create(client: new Client(config: []), signKey: ne
     ->withEnvironmentStage()
 ;
 
-$result = $builder->createOrderClient()
+$result = $builder->createClassicPayoutClient()
     ->createPayoutClassic(
         request: new Payout(
             description: 'Вывод денег',
