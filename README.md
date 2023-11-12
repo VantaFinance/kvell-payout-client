@@ -74,7 +74,7 @@ $builder = RestClientBuilder::create(client: new Client(config: []), signKey: ne
     ->withEnvironmentStage()
 ;
 
-$result = $builder->createClassicPayoutClient()->getOrder('b1e8fdb4-6562-4992-a933-cf029f9e31d3');
+$result = $builder->createClassicPayoutClient()->getPayout('b1e8fdb4-6562-4992-a933-cf029f9e31d3');
 ```
 
 
